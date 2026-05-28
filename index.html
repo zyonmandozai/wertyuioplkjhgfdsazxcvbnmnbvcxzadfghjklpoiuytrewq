@@ -24,7 +24,7 @@
     <iframe id="arcade-frame" src=""></iframe>
 
     <script>
-        // Added a public CORS proxy helper right before your raw Gist URL
+        // Added the allorigins CORS proxy to make sure the browser doesn't block the Gist pull
         const gistUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://gist.githubusercontent.com/zyonmandozai/f3bcae93c6ba3256293800d54e7fff64/raw");
 
         async function fetchTunnelLink() {
@@ -32,8 +32,6 @@
                 const response = await fetch(gistUrl);
                 if (!response.ok) throw new Error('Network response was not ok');
                 const tunnelUrl = await response.text();
-                
-                // Set the iframe source to your live tunnel link
                 document.getElementById('arcade-frame').src = tunnelUrl.trim();
             } catch (error) {
                 console.error("Error fetching tunnel link:", error);
