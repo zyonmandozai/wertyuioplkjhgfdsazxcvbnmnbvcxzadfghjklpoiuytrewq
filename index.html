@@ -24,21 +24,22 @@
     <iframe id="arcade-frame" src=""></iframe>
 
     <script>
-        // Added the allorigins CORS proxy to make sure the browser doesn't block the Gist pull
-        const gistUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://gist.githubusercontent.com/zyonmandozai/f3bcae93c6ba3256293800d54e7fff64/raw");
+        // Using JSONP callback to completely smash through the browser's CORS block
+        const gistId = "f3bcae93c6ba3256293800d54e7fff64";
+        const script = document.createElement('script');
+        
+        script.src = `https://api.allorigins.win/get?url=${encodeURIComponent('https://gist.githubusercontent.com/zyonmandozai/' + gistId + '/raw')}&callback=handleTunnel`;
+        document.body.appendChild(script);
 
-        async function fetchTunnelLink() {
+        function handleTunnel(data) {
             try {
-                const response = await fetch(gistUrl);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const tunnelUrl = await response.text();
-                document.getElementById('arcade-frame').src = tunnelUrl.trim();
+                // Grab the clean link out of the wrapper, trim any sneaky spaces, and inject it
+                const tunnelUrl = data.contents.trim();
+                document.getElementById('arcade-frame').src = tunnelUrl;
             } catch (error) {
-                console.error("Error fetching tunnel link:", error);
+                console.error("Error setting iframe source:", error);
             }
         }
-
-        fetchTunnelLink();
     </script>
 </body>
 </html>
